@@ -1,4 +1,4 @@
-import { CardState } from "@/types/cards";
+import { CardState, CardStateHistory } from "@/types/cards";
 
 const CARD_FINAL_STATE_ID = 65535;
 
@@ -16,7 +16,7 @@ export const isCardDone = (card: CardState) => {
 };
 
 const posToRow = (pos: number) => {
-  return (pos / 4) * 4;
+  return Math.floor(pos / 4) * 4;
 };
 
 const posToCol = (pos: number) => {
@@ -35,7 +35,7 @@ const isRowDone = (pos: number, states: boolean[]) => {
 
 const isColDone = (pos: number, states: boolean[]) => {
   const col = posToCol(pos);
-  for (let i = col; i < 13; i += 4) {
+  for (let i = col; i < 16; i += 4) {
     if (!states[i]) {
       return false;
     }
@@ -72,8 +72,6 @@ export const stampCard = (card: CardState, pos: number) => {
   const nextStates = [...card.states];
   nextStates[pos] = true;
 
-  const nextHistory = [...card.history, pos];
-
   let nextMoves = card.moves - 1;
   if (isColDone(pos, nextStates)) {
     nextMoves++;
@@ -92,6 +90,14 @@ export const stampCard = (card: CardState, pos: number) => {
     nextMoves++;
   }
   nextMoves = Math.min(nextMoves, 3);
+
+  const nextHistory: CardStateHistory[] = [
+    ...card.history,
+    {
+      latestMove: pos,
+      moves: nextMoves,
+    },
+  ];
 
   const nextCardState: CardState = {
     history: nextHistory,
