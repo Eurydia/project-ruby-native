@@ -2,7 +2,7 @@
   "expo": {
     "name": "project-ruby-native",
     "slug": "project-ruby-native",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "io.github.eurydia.projectrubynative"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,16 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "945b386c-a60b-43c0-8101-25468c045664"
+      }
+    },
+    "owner": "eurydia"
   }
 }
+
