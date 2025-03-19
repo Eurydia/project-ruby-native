@@ -1,14 +1,15 @@
 import { useGreedySolver } from "@/hooks/useGreedySolver";
 import { CardState } from "@/types/cards";
 import { useState } from "react";
+import { ScrollView, View } from "react-native";
 import {
   Button,
-  Pressable,
-  ScrollView,
+  Divider,
+  Icon,
   Text,
   TextInput,
-  View,
-} from "react-native";
+  TouchableRipple,
+} from "react-native-paper";
 
 export default function Index() {
   const [items, setItems] = useState(() => {
@@ -26,21 +27,78 @@ export default function Index() {
   return (
     <ScrollView
       style={{
-        padding: 16,
         gap: 8,
         display: "flex",
         flexDirection: "column",
-        margin: 8,
       }}
     >
       <TextInput
-        keyboardType="number-pad"
         editable
+        mode="outlined"
+        label="Moves"
+        keyboardType="number-pad"
         value={moves}
         onChangeText={(value) => setMoves(value)}
+        placeholder="Moves"
       />
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        {items.map((item, index) => {
+          const isSelected = item;
+          return (
+            <View
+              key={"input-item" + index}
+              style={{
+                width: "24%",
+                aspectRatio: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "1%",
+              }}
+            >
+              <TouchableRipple
+                onPress={() =>
+                  setItems((prev) => {
+                    const next = [...prev];
+                    next[index] = !prev[index];
+                    return next;
+                  })
+                }
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  aspectRatio: "1/1",
+                  backgroundColor: isSelected
+                    ? "#7986cb"
+                    : "#1a237e",
+
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text>
+                  {isSelected && (
+                    <Icon
+                      source="check"
+                      allowFontScaling
+                      size={20}
+                    />
+                  )}
+                </Text>
+              </TouchableRipple>
+            </View>
+          );
+        })}
+      </View>
       <Button
-        title="Solve"
+        mode="outlined"
         onPress={() => {
           setResult(
             solver({
@@ -50,48 +108,15 @@ export default function Index() {
             })
           );
         }}
-      />
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-        }}
       >
-        {items.map((item, index) => {
-          const isActive = item;
-          return (
-            <Pressable
-              onPress={() =>
-                setItems((prev) => {
-                  const next = [...prev];
-                  next[index] = !prev[index];
-                  return next;
-                })
-              }
-              key={"input-item" + index}
-              style={{
-                width: "25%",
-
-                padding: 5,
-                backgroundColor: isActive
-                  ? "skyblue"
-                  : "darkgrey",
-                aspectRatio: "1/1",
-                height: "100%",
-                borderColor: "slateblue",
-                borderStyle: "solid",
-                borderWidth: 1,
-              }}
-            >
-              <Text>{isActive ? "X" : ""}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
+        Solve
+      </Button>
       {result !== null && (
         <View>
-          <Text>Moves: {result.moves}</Text>
+          <Divider />
+          <Text variant="displayMedium">
+            Moves: {result.moves}
+          </Text>
           <View
             style={{
               display: "flex",
@@ -105,6 +130,12 @@ export default function Index() {
                   (history) => history.latestMove === index
                 ) + 1;
               const hasOrder = order > 0;
+
+              const msg = hasOrder
+                ? `${order} (${
+                    result.history[order - 1].moves
+                  }/3)`
+                : "";
               return (
                 <View
                   style={{
@@ -115,31 +146,15 @@ export default function Index() {
                     padding: 5,
 
                     backgroundColor: hasOrder
-                      ? "cornflowerblue"
-                      : "darkgrey",
+                      ? "#7986cb"
+                      : "#1a237e",
                     justifyContent: "center",
                   }}
                   key={"result-itme" + index}
                 >
-                  <Text
-                    style={{
-                      fontWeight: "900",
-                    }}
-                  >
-                    {hasOrder && order.toString()}
-                  </Text>
-                  <Text
-                    style={{
-                      position: "absolute",
-                      top: 16,
-                      left: 16,
-                    }}
-                  >
-                    {hasOrder &&
-                      `${
-                        result.history[order - 1].moves
-                      }/3`}
-                  </Text>
+                  {hasOrder && (
+                    <Text variant="labelLarge">{msg}</Text>
+                  )}
                 </View>
               );
             })}
